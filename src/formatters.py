@@ -1,4 +1,6 @@
 import logging
+import texttable
+from tabulate import tabulate
 
 
 class DiscordFormatter(logging.Formatter):
@@ -25,4 +27,23 @@ class DiscordFormatter(logging.Formatter):
         return super().format(record)
 
 
-__all__ = ['DiscordFormatter']
+class TelegramFormatter(logging.Formatter):
+    def __init__(self, include_fields=None, exclude_fields=None):
+        super().__init__()
+        self.include_fields = include_fields or []
+        self.exclude_fields = exclude_fields or []
+
+    def format(self, record):
+        record_dict = record.__dict__
+
+        if self.include_fields:
+            data = {key: record_dict[key] for key in self.include_fields if key in record_dict}
+        else:
+            data = {key: value for key, value in record_dict.items() if key not in self.exclude_fields}
+
+        # Converter para tabela
+        table = tabulate(data.items(), tablefmt='presto', headers=['field', 'value'])
+        return table
+
+
+__all__ = ['DiscordFormatter', 'TelegramFormatter']
