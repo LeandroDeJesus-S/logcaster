@@ -1,8 +1,7 @@
 import logging
 import pytest
-from logcaster.handlers import DiscordHandler
-from logcaster.formatters import DiscordFormatter
 from django.conf import settings
+from logcaster.discord import DiscordHandler, DiscordFormatter
 
 
 @pytest.fixture
@@ -31,12 +30,12 @@ def log_record() -> logging.LogRecord:
 
 @pytest.fixture
 def mock_webhook(mocker):
-    return mocker.patch("logcaster.handlers.DiscordWebhook")
+    return mocker.patch("logcaster.discord.DiscordWebhook")
 
 
 @pytest.fixture
 def mock_embed(mocker):
-    return mocker.patch("logcaster.handlers.DiscordEmbed")
+    return mocker.patch("logcaster.discord.DiscordEmbed")
 
 
 @pytest.fixture

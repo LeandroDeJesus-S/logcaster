@@ -77,7 +77,7 @@ LOGGING = {
         }
     },
     "loggers": {
-        "easy": {
+        "logcaster": {
             "handlers": ["telegram", "discord"],
             "formatters": ["telegram_fmt", "discord_fmt"],
             "level": "ERROR",
