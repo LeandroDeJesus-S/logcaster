@@ -1,4 +1,4 @@
-from easylog.formatters import TelegramFormatter
+from logcaster.formatters import TelegramFormatter
 from tabulate import tabulate
 
 

@@ -33,7 +33,7 @@ class BaseFormatter(logging.Formatter):
 
 class DiscordFormatter(BaseFormatter):
     def __init__(self, *args, **kwargs):
-        self.author = kwargs.pop('author', 'EasyLog')
+        self.author = kwargs.pop('author', 'Logcaster')
         self.thumbnail = kwargs.pop('thumbnail_url', None)
         self.image = kwargs.pop('image_url', None)
 

@@ -1,4 +1,4 @@
-# EasyLog
+# Logcaster
 A package to send loggings to discord, telegram and whatever other location with the proposal of easily implements observability to small and lower coast applications
 
 <p align="center">🛠🔧 Project in development process 🔧🛠</p>
@@ -21,14 +21,14 @@ Requirements
 #### Install
 ```sh
 # by defaults supports telegram setup
-poetry add easylog
+poetry add logcaster
 
 # discord
-poetry add "easylog[discord]"
+poetry add "logcaster[discord]"
 ```
 
 #### Configure
-Once installed, you need only set the environment vars (see: [.env example file]('.env-example'))
+Once installed, you need only set the environment vars (see: [.env example file](https://github.com/LeandroDeJesus-S/logcaster/blob/main/.env-example))
 ```yml
 # .env
 TELEGRAM__BOT_TOKEN=<you bot token>
@@ -38,7 +38,7 @@ TELEGRAM__CHAT_ID=<the chat id which the bot will send logs>
 #### Usage
 ```py
 import logging
-from easylog.telegram import TelegramHandler, TelegramFormatter
+from logcaster.telegram import TelegramHandler, TelegramFormatter
 
 logger = logger.getLogger('my-application-logger')
 
@@ -60,19 +60,19 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "telegram_fmt": {
-            "class": "easylog.telegram.TelegramFormatter",
+            "class": "logcaster.telegram.TelegramFormatter",
         },
         "discord_fmt": {
-            "class": "easylog.discord.DiscordFormatter",
+            "class": "logcaster.discord.DiscordFormatter",
             "exclude_fields": ['funcName', 'lineno'],
         }
     },
     "handlers": {
         "telegram": {
-            "class": "easylog.telegram.TelegramHandler",
+            "class": "logcaster.telegram.TelegramHandler",
         },
         "discord": {
-            "class": "easylog.discord.DiscordHandler",
+            "class": "logcaster.discord.DiscordHandler",
             "exclude_fields": ['funcName', 'lineno'],
         }
     },

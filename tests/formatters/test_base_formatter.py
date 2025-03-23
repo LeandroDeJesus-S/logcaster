@@ -1,4 +1,4 @@
-from easylog.formatters import BaseFormatter
+from logcaster.formatters import BaseFormatter
 import pytest
 
 
