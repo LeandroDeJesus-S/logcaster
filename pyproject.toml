@@ -1,6 +1,6 @@
 [project]
 name = "logcaster"
-version = "0.1.0"
+version = "0.1.1"
 description = "Logging handlers to send logs to discord and telegram"
 authors = [
     {name = "LeandroDeJesus-S",email = "jstleandro@gmail.com"}
@@ -29,8 +29,8 @@ classifiers = [
 keywords = ['logging']
 
 [project.urls]
-repository = 'https://github.com/LeandroDeJesus-S/easylog'
-issues = 'https://github.com/LeandroDeJesus-S/easylog/issues'
+repository = 'https://github.com/LeandroDeJesus-S/logcaster'
+issues = 'https://github.com/LeandroDeJesus-S/logcaster/issues'
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

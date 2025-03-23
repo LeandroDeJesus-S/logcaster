@@ -1,4 +1,4 @@
-from logcaster.formatters import TelegramFormatter
+from logcaster.telegram import TelegramFormatter
 from tabulate import tabulate
 
 

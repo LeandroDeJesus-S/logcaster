@@ -1,4 +1,4 @@
-from logcaster.formatters import DiscordFormatter
+from logcaster.discord import DiscordFormatter
 from discord_webhook import DiscordEmbed
 
 fmt = DiscordFormatter()
