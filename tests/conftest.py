@@ -2,6 +2,7 @@ import logging
 import pytest
 from logcaster.handlers import DiscordHandler
 from logcaster.formatters import DiscordFormatter
+from django.conf import settings
 
 
 @pytest.fixture
@@ -45,3 +46,7 @@ def discord_webhook_handler():
 @pytest.fixture
 def discord_fmt():
     return DiscordFormatter()
+
+
+def pytest_configure():
+    settings.configure()
