@@ -1,6 +1,7 @@
 import logging
 import pytest
-from  src.handlers import DiscordWebhookHandler
+from easylog.handlers import DiscordHandler
+from easylog.formatters import DiscordFormatter
 
 
 @pytest.fixture
@@ -29,14 +30,18 @@ def log_record() -> logging.LogRecord:
 
 @pytest.fixture
 def mock_webhook(mocker):
-    return mocker.patch("src.handlers.DiscordWebhook")
+    return mocker.patch("easylog.handlers.DiscordWebhook")
 
 
 @pytest.fixture
 def mock_embed(mocker):
-    return mocker.patch("src.handlers.DiscordEmbed")
+    return mocker.patch("easylog.handlers.DiscordEmbed")
 
 
 @pytest.fixture
 def discord_webhook_handler():
-    return DiscordWebhookHandler()
+    return DiscordHandler()
+
+@pytest.fixture
+def discord_fmt():
+    return DiscordFormatter()
