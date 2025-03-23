@@ -1,6 +1,6 @@
 [project]
 name = "logcaster"
-version = "0.1.1"
+version = "0.1.2"
 description = "Logging handlers to send logs to discord and telegram"
 authors = [
     {name = "LeandroDeJesus-S",email = "jstleandro@gmail.com"}
@@ -39,6 +39,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
 pytest-mock = "^3.14.0"
+django = "^5.1.7"
 
 [project.optional-dependencies]
 discord = [ "discord-webhook (>=1.4.1,<2.0.0)" ]

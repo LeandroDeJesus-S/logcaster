@@ -3,3 +3,4 @@
 .env
 _local.py
 dist/
+dev_django_project/
