@@ -1,13 +1,17 @@
 import logging
+
 import pytest
 from django.conf import settings
-from logcaster.discord import DiscordHandler, DiscordFormatter
+
+from logcaster.discord import DiscordFormatter, DiscordHandler
+from logcaster.settings import _models
+from logcaster.telegram import TelegramAsyncHandler
 
 
 @pytest.fixture
 def log_record() -> logging.LogRecord:
     """return a log record object instance with the args bellow
-    
+
     Args:
         name (str): rec name
         level (int): logging.DEBUG
@@ -18,11 +22,11 @@ def log_record() -> logging.LogRecord:
         exc_info (_SysExcInfoType): None
     """
     return logging.LogRecord(
-        name='rec name',
+        name="rec name",
         level=logging.DEBUG,
-        pathname='path/name',
+        pathname="path/name",
         lineno=20,
-        msg='some message',
+        msg="some message",
         args=None,
         exc_info=None,
     )
@@ -39,12 +43,51 @@ def mock_embed(mocker):
 
 
 @pytest.fixture
+def mock_telegram_env(mocker):
+    mocker.patch.object(
+        _models.Environment,
+        "get_telegram_settings",
+        return_value=_models.TelegramEnvironmentVars(
+            bot_token="bot_token", chat_id=123
+        ),
+    )
+
+
+@pytest.fixture
+def mock_discord_env(mocker):
+    mocker.patch.object(
+        _models.Environment,
+        "get_discord_settings",
+        return_value=_models.DiscordEnvironmentVars(webhook_url="webhook_url"),
+    )
+
+@pytest.fixture
+def mock_dj_env(mocker):
+    mocked_settings = mocker.Mock(
+        LOGCASTER_DISCORD_WEBHOOK_URL='https://discord.com',
+        LOGCASTER_TELEGRAM_BOT_TOKEN='token',
+        LOGCASTER_TELEGRAM_CHAT_ID=123,
+    )
+    mocker.patch.object(
+        _models.Environment,
+        "get_django_settings",
+        return_value=mocked_settings,
+    )
+
+
+@pytest.fixture
 def discord_webhook_handler():
     return DiscordHandler()
+
 
 @pytest.fixture
 def discord_fmt():
     return DiscordFormatter()
+
+
+@pytest.fixture
+def handler():
+    return TelegramAsyncHandler()
 
 
 def pytest_configure():

@@ -1,13 +1,18 @@
+import asyncio
 import json
+from logging import ERROR
 import sys
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
 
+import httpx
 from tabulate import tabulate
 
 from .formatters import BaseFormatter
 from .handlers import BaseHandler
 from .settings import ENV
+from logcaster.utils import emit_async
+from .exceptions import EmitError
 
 
 class TelegramFormatter(BaseFormatter):
@@ -18,31 +23,39 @@ class TelegramFormatter(BaseFormatter):
 
     def format(self, record):
         data = self._get_fields(record)
-        table = tabulate(data.items(), tablefmt='presto', headers=['field', 'value'])
-        return table
+        table = tabulate(
+            data.items(), tablefmt="presto", headers=["field", "value"]
+        )
+        return f"```\n{table}\n```"
 
 
 class TelegramHandler(BaseHandler):
     def emit(self, record):
         out = self.format(record)
-        out = f"```\n{out}\n```"
-        chat_id = ENV.telegram.chat_id
+        conf = ENV.get_telegram_settings()
+
         data = json.dumps(
-            {"text": out, "chat_id": chat_id, "parse_mode": "MarkdownV2"}
+            {
+                "text": out,
+                "chat_id": conf.chat_id,
+                "parse_mode": "MarkdownV2",
+            }
         ).encode("utf-8")
 
         request = Request(
-            f"https://api.telegram.org/bot{ENV.telegram.bot_token}/sendMessage",
+            f"https://api.telegram.org/bot{conf.bot_token}/sendMessage",
             data=data,
             headers={"Content-Type": "application/json"},
         )
 
         try:
             urlopen(request)
-            sys.stdout.write(f"Logging sent to telegram chat id {chat_id}\n")
+            sys.stdout.write(f"Logging sent to telegram chat id {conf.chat_id}\n")
 
         except HTTPError as e:
-            sys.stdout.write(f"error when logging to telegram: {e.read().decode()}\n")
+            sys.stdout.write(
+                f"error when logging to telegram: {e.read().decode()}\n"
+            )
             return False
 
         except Exception as e:
@@ -53,4 +66,39 @@ class TelegramHandler(BaseHandler):
         return True
 
 
-__all__ = ['TelegramHandler', 'TelegramFormatter']
+class TelegramAsyncHandler(BaseHandler):
+    def __init__(self, level=ERROR, httpx_client_params=None):
+        super().__init__(level)
+        self._httpx_client_params = httpx_client_params or {}
+
+    async def _emit(self, record):
+        out = self.format(record)
+        conf = ENV.get_telegram_settings()
+        data = {
+            "text": out,
+            "chat_id": conf.chat_id,
+            "parse_mode": "MarkdownV2",
+        }
+
+        async with httpx.AsyncClient(**self._httpx_client_params) as client:
+            try:
+                response = await client.post(
+                    f"https://api.telegram.org/bot{conf.bot_token}/sendMessage",
+                    json=data,
+                    headers={"Content-Type": "application/json"},
+                )
+                response.raise_for_status()
+                sys.stdout.write(
+                    f"Logging sent to telegram chat id {conf.chat_id}\n"
+                )
+
+            except httpx.HTTPError as e:
+                raise EmitError(
+                    f"error when logging to telegram: {e.request} - {e}"
+                )
+
+    def emit(self, record):
+        emit_async(self._emit(record))
+
+
+__all__ = ["TelegramHandler", "TelegramFormatter"]
