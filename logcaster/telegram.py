@@ -15,6 +15,8 @@ from .formatters import BaseFormatter
 from .handlers import BaseHandler
 from .settings import ENV
 
+__all__ = ['TelegramHandler', 'TelegramFormatter', 'TelegramAsyncHandler']
+
 
 class TelegramFormatter(BaseFormatter):
     def __init__(
@@ -110,6 +112,3 @@ class TelegramAsyncHandler(BaseHandler):
 
     def emit(self, record: LogRecord) -> None:
         emit_async(self._emit(record))
-
-
-__all__ = ['TelegramHandler', 'TelegramFormatter']

@@ -2,9 +2,9 @@ from typing import Any
 
 from pydantic_settings import BaseSettings, SettingsConfigDict, SettingsError
 
-DJANGO_DISCORD_WEBHOOK_URL_KEY = "LOGCASTER_DISCORD_WEBHOOK_URL"
-DJANGO_TELEGRAM_BOT_TOKEN_KEY = "LOGCASTER_TELEGRAM_BOT_TOKEN"
-DJANGO_TELEGRAM_CHAT_ID_KEY = "LOGCASTER_TELEGRAM_CHAT_ID"
+DJANGO_DISCORD_WEBHOOK_URL_KEY = 'LOGCASTER_DISCORD_WEBHOOK_URL'
+DJANGO_TELEGRAM_BOT_TOKEN_KEY = 'LOGCASTER_TELEGRAM_BOT_TOKEN'
+DJANGO_TELEGRAM_CHAT_ID_KEY = 'LOGCASTER_TELEGRAM_CHAT_ID'
 
 
 class DiscordEnvironmentVars(BaseSettings):
@@ -21,7 +21,7 @@ class Environment(BaseSettings):
     telegram: TelegramEnvironmentVars | None = None
 
     model_config = SettingsConfigDict(
-        env_file=".env", extra="ignore", env_nested_delimiter="__"
+        env_file='.env', extra='ignore', env_nested_delimiter='__'
     )
 
     @classmethod
@@ -48,7 +48,7 @@ class Environment(BaseSettings):
             return
 
         raise SettingsError(
-            "\033[31m A Logcaster source must be configured \033[m"
+            '\033[31m A Logcaster source must be configured \033[m'
         )
 
     def get_discord_settings(self) -> DiscordEnvironmentVars:
@@ -56,7 +56,7 @@ class Environment(BaseSettings):
         if discord is not configured
         """
         if self.discord is None:
-            raise SettingsError("discord is not configured")
+            raise SettingsError('discord is not configured')
         return self.discord
 
     def get_telegram_settings(self) -> TelegramEnvironmentVars:
@@ -64,7 +64,7 @@ class Environment(BaseSettings):
         if telegram is not configured
         """
         if self.telegram is None:
-            raise SettingsError("telegram is not configured")
+            raise SettingsError('telegram is not configured')
         return self.telegram
 
     def _get_dj_setting(cls, setting_name: str, settings: Any) -> Any:
@@ -100,9 +100,9 @@ class Environment(BaseSettings):
 
         elif telegram_bot_token or telegram_chat_id:
             raise SettingsError(
-                "\033[31m telegram must have both "
-                "`LOGCASTER_TELEGRAM_BOT_TOKEN` "
-                "and `LOGCASTER_TELEGRAM_CHAT_ID` provided \033[m"
+                '\033[31m telegram must have both '
+                '`LOGCASTER_TELEGRAM_BOT_TOKEN` '
+                'and `LOGCASTER_TELEGRAM_CHAT_ID` provided \033[m'
             )
 
         discord_wh_url: str = self._get_dj_setting(
@@ -114,8 +114,8 @@ class Environment(BaseSettings):
 
         if not using_telegram:
             raise SettingsError(
-                "\033[31m A Logcaster source must be configured \033[m"
+                '\033[31m A Logcaster source must be configured \033[m'
             )
 
 
-__all__ = ["Environment"]
+__all__ = ['Environment']

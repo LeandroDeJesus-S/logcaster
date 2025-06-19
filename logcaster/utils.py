@@ -22,6 +22,7 @@ def emit_async(
         if callable(on_done):
             task.add_done_callback(on_done)
     except RuntimeError:
+
         def run() -> None:
             new_loop = asyncio.new_event_loop()
             asyncio.set_event_loop(new_loop)

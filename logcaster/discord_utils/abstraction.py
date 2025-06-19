@@ -9,6 +9,7 @@ TimestampType: TypeAlias = float | int | str | datetime
 
 class AbsDiscordEmbed(ABC):
     """Abstract class that represents a discord embed class."""
+
     embed: EmbedObject
 
     @abstractmethod

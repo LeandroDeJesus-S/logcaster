@@ -6,4 +6,4 @@ class BaseHandler(logging.Handler):
         super().__init__(level)
 
 
-__all__ = ["BaseHandler"]
+__all__ = ['BaseHandler']

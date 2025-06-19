@@ -56,7 +56,7 @@ class EmbedObject(BaseModel):
     def model_post_init(self, _: Any) -> None:
         if len(self.fields) > MAX_EMBED_FIELDS:
             raise ValueError(
-                f"Embeds can have a maximum of {MAX_EMBED_FIELDS} fields"
+                f'Embeds can have a maximum of {MAX_EMBED_FIELDS} fields'
             )
 
 
