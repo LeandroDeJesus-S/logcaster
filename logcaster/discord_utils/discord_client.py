@@ -58,3 +58,19 @@ class DiscordWebhookClient(AbsDiscordWebhookClient):
         response.raise_for_status()
 
         self._payload = None
+
+
+class DiscordWebhookAsyncClient(DiscordWebhookClient):
+    async def execute(self) -> None:  # type: ignore
+        if self._payload is None:
+            raise ValueError('No payload to send')
+
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                self.webhook_url,
+                json=self._payload.model_dump(),
+            )
+
+        response.raise_for_status()
+
+        self._payload = None

@@ -1,5 +1,5 @@
 import pytest
-from logcaster.discord_utils.discord_client import DiscordWebhookClient
+from logcaster.discord_utils.discord_client import DiscordWebhookClient, DiscordWebhookAsyncClient
 from logcaster.discord_utils.discord_embed import DiscordEmbed
 
 
@@ -43,6 +43,22 @@ def test_client_execute(mocker):
     client = DiscordWebhookClient('https://discord.com/api/webhooks/123/abc')
     client.add_embed(DiscordEmbed())
     client.execute()
+
+    mocked_post.assert_called_once()
+    assert client._payload is None
+
+
+@pytest.mark.asyncio
+async def test_async_client_execute(mocker):
+    mocked_response = mocker.Mock(status_code=200)
+    mocked_post = mocker.patch(
+        'logcaster.discord_utils.discord_client.httpx.AsyncClient.post',
+        return_value=mocked_response,
+    )
+
+    client = DiscordWebhookAsyncClient('https://discord.com/api/webhooks/123/abc')
+    client.add_embed(DiscordEmbed())
+    await client.execute()
 
     mocked_post.assert_called_once()
     assert client._payload is None
