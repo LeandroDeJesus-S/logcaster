@@ -1,9 +1,13 @@
 import asyncio
 import threading
-from typing import Callable, Coroutine, Optional
+from asyncio import Task
+from typing import Any, Callable, Coroutine
 
 
-def emit_async(coroutine: Coroutine, on_done: Optional[Callable] = None) -> None:
+def emit_async(
+    coroutine: Coroutine[Any, Any, Any],
+    on_done: Callable[[Task[Any]], object] | None = None,
+) -> None:
     """run the given coroutine inside a already running event loop or
     creates a new one that runs inside a threading
 
@@ -18,8 +22,7 @@ def emit_async(coroutine: Coroutine, on_done: Optional[Callable] = None) -> None
         if callable(on_done):
             task.add_done_callback(on_done)
     except RuntimeError:
-        # wether there aren't any loops running start in a new thread with a new loop
-        def run():
+        def run() -> None:
             new_loop = asyncio.new_event_loop()
             asyncio.set_event_loop(new_loop)
             new_loop.run_until_complete(coroutine)

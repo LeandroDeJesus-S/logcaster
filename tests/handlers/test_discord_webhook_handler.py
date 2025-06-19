@@ -1,11 +1,18 @@
-def test_emit(discord_webhook_handler, log_record, mock_webhook, mocker, discord_fmt):
-    mock_webhook.return_value = mocker.Mock()
-    discord_webhook_handler.get_webhook = mock_webhook
-    discord_webhook_handler.formatter = discord_fmt
-    mock_instance = mock_webhook.return_value
+from logcaster.discord import DiscordHandler
+from logcaster.discord_utils.abstraction import AbsDiscordWebhookClient
 
-    discord_webhook_handler.emit(log_record)
 
-    mock_webhook.assert_called_once()
-    mock_instance.add_embed.assert_called_once()
-    mock_instance.execute.assert_called_once()
+def test_emit(log_record, mocker, discord_fmt):
+    webhook_client = mocker.MagicMock(spec=AbsDiscordWebhookClient)
+    webhook = mocker.MagicMock()
+    webhook.return_value = webhook_client
+    
+    discord_wh_handler = DiscordHandler()
+    discord_wh_handler.formatter = discord_fmt
+    discord_wh_handler.get_webhook = webhook
+
+    discord_wh_handler.emit(log_record)
+
+    discord_wh_handler.get_webhook.assert_called_once()
+    webhook_client.add_embed.assert_called_once()
+    webhook_client.execute.assert_called_once()

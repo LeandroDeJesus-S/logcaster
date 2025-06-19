@@ -8,5 +8,8 @@ def test_formatter_returns_a_presto_table(log_record):
         ['message', log_record.getMessage()],
         ['asctime', fmt.formatTime(log_record, fmt.datefmt)],
     ], tablefmt='presto', headers=['field', 'value'])
+    expected = f'```\n{expected}\n```'
+
     result = fmt.format(log_record)
+
     assert result == expected

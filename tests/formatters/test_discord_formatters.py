@@ -1,5 +1,5 @@
 from logcaster.discord import DiscordFormatter
-from discord_webhook import DiscordEmbed
+from logcaster.discord_utils.abstraction import AbsDiscordEmbed
 
 fmt = DiscordFormatter()
 
@@ -7,7 +7,7 @@ fmt = DiscordFormatter()
 def test_format_method_returns_an_embed_instance(log_record):
     """test if the format method returns an instance of DiscordEmbed class"""
     formatted = fmt.format(log_record)
-    assert isinstance(formatted, DiscordEmbed)
+    assert isinstance(formatted, AbsDiscordEmbed)
 
 
 def test_get_level_name_method(log_record):

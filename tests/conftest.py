@@ -6,6 +6,7 @@ from django.conf import settings
 from logcaster.discord import DiscordFormatter, DiscordHandler
 from logcaster.settings import _models
 from logcaster.telegram import TelegramAsyncHandler
+from logcaster.discord_utils.abstraction import AbsDiscordEmbed, AbsDiscordWebhookClient
 
 
 @pytest.fixture
@@ -34,12 +35,12 @@ def log_record() -> logging.LogRecord:
 
 @pytest.fixture
 def mock_webhook(mocker):
-    return mocker.patch("logcaster.discord.DiscordWebhook")
+    return mocker.MagicMock(spec=AbsDiscordWebhookClient)
 
 
 @pytest.fixture
 def mock_embed(mocker):
-    return mocker.patch("logcaster.discord.DiscordEmbed")
+    return mocker.MagicMock(spec=AbsDiscordEmbed)
 
 
 @pytest.fixture
@@ -74,6 +75,11 @@ def mock_dj_env(mocker):
         return_value=mocked_settings,
     )
 
+@pytest.fixture
+def clear_env(monkeypatch):
+    monkeypatch.delenv('DISCORD__WEBHOOK_URL', raising=False)
+    monkeypatch.delenv('TELEGRAM__BOT_TOKEN', raising=False)
+    monkeypatch.delenv('TELEGRAM__CHAT_ID', raising=False)
 
 @pytest.fixture
 def discord_webhook_handler():
