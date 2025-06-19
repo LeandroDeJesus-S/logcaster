@@ -38,7 +38,7 @@ class AbsDiscordEmbed(ABC):
         """
 
 
-class AbsDiscordWebhookClient(ABC):
+class AbsBaseWebhookClient(ABC):
     @abstractmethod
     def __init__(self, webhook_url: str) -> None: ...
 
@@ -53,5 +53,12 @@ class AbsDiscordWebhookClient(ABC):
     @abstractmethod
     def content(self, value: str) -> None: ...
 
+
+class AbsDiscordWebhookClient(AbsBaseWebhookClient):
     @abstractmethod
     def execute(self) -> None: ...
+
+
+class AbsDiscordWebhookAsyncClient(AbsBaseWebhookClient):
+    @abstractmethod
+    async def execute(self) -> None: ...

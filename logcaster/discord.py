@@ -4,14 +4,22 @@ from typing import Any, Type
 
 from logcaster.discord_utils.abstraction import (
     AbsDiscordEmbed,
+    AbsDiscordWebhookAsyncClient,
     AbsDiscordWebhookClient,
 )
-from logcaster.discord_utils.discord_client import DiscordWebhookClient
+from logcaster.discord_utils.discord_client import (
+    DiscordWebhookAsyncClient,
+    DiscordWebhookClient,
+)
 from logcaster.discord_utils.discord_embed import DiscordEmbed
+from logcaster.exceptions import EmitError
+from logcaster.utils import emit_async
 
 from .formatters import BaseFormatter
 from .handlers import BaseHandler
 from .settings import ENV
+
+__all__ = ['DiscordHandler', 'DiscordFormatter', 'DiscordAsyncHandler']
 
 
 class DiscordFormatter(BaseFormatter):
@@ -78,7 +86,14 @@ class DiscordFormatter(BaseFormatter):
         return embed
 
 
-class DiscordHandler(BaseHandler):
+class DiscordBaseHandler(BaseHandler):
+    def get_webhook(
+        self,
+    ) -> AbsDiscordWebhookClient | AbsDiscordWebhookAsyncClient:
+        raise NotImplementedError
+
+
+class DiscordHandler(DiscordBaseHandler):
     @classmethod
     def get_webhook(cls) -> AbsDiscordWebhookClient:
         settings = ENV.get_discord_settings()
@@ -104,4 +119,27 @@ class DiscordHandler(BaseHandler):
             sys.stderr.write(f'lost message: {record.getMessage()}')
 
 
-__all__ = ['DiscordHandler', 'DiscordFormatter']
+class DiscordAsyncHandler(DiscordBaseHandler):
+    @classmethod
+    def get_webhook(cls) -> AbsDiscordWebhookAsyncClient:
+        settings = ENV.get_discord_settings()
+        return DiscordWebhookAsyncClient(settings.webhook_url)
+
+    async def _emit(self, record: logging.LogRecord) -> None:
+        webhook = self.get_webhook()
+
+        fmt = self.format(record)
+        if isinstance(fmt, AbsDiscordEmbed):
+            webhook.add_embed(fmt)
+        else:
+            webhook.content = fmt
+
+        try:
+            await webhook.execute()
+            sys.stdout.write('logger sent to discord\n')
+
+        except Exception as e:
+            raise EmitError(f'fail to sending logging to Discord: {e}')
+
+    def emit(self, record: logging.LogRecord) -> None:
+        emit_async(self._emit(record))

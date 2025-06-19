@@ -46,7 +46,9 @@ handler = TelegramHandler()
 formatter = TelegramFormatter(include_fields=['message', 'asctime'])
 
 handler.setFormatter(formatter)
-logger.addLogger(logger)
+logger.addHandler(handler)
+
+logger.error('Oops!')
 ```
 
 **Note**: The default level is setting up to ERROR, it's highly recommended don't set a lower level, cause each emitted logging will make a request to the given source.

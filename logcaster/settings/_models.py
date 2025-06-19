@@ -40,13 +40,11 @@ class Environment(BaseSettings):
         SettingsError
         """
         if (self.discord is not None) or (self.telegram is not None):
-            print('1')
             return
 
         dj_settings = self._get_django_settings()
         if dj_settings is not None:
             self._configure_django(dj_settings)
-            print('2')
             return
 
         raise SettingsError(

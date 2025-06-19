@@ -2,21 +2,30 @@ from re import match
 
 import httpx
 
-from .abstraction import AbsDiscordEmbed, AbsDiscordWebhookClient
+from .abstraction import (
+    AbsBaseWebhookClient,
+    AbsDiscordEmbed,
+    AbsDiscordWebhookAsyncClient,
+    AbsDiscordWebhookClient,
+)
 from .models import WebhookClientPayload
 
 
-class DiscordWebhookClient(AbsDiscordWebhookClient):
-    def __init__(self, webhook_url: str) -> None:
-        self.webhook_url = webhook_url
-        if not match(
-            r'^https?://discord.com/api/webhooks/[0-9]+/[a-zA-Z0-9]+$',
-            self.webhook_url,
-        ):
-            raise ValueError(
-                f'Invalid webhook url: {self.webhook_url}. '
-                'Expected format: https://discord.com/api/webhooks/[id]/[token]'
+def _check_url(webhook_url: str) -> None:
+    if not match(
+        r'^https?://discord.com/api/webhooks/[0-9]+/\w+$',
+        webhook_url,
+    ):
+        raise ValueError(
+            f'Invalid webhook url: {webhook_url}. '
+            'Expected format: https://discord.com/api/webhooks/[id]/[token]'
         )
+
+
+class DiscordBaseWebhookClient(AbsBaseWebhookClient):
+    def __init__(self, webhook_url: str) -> None:
+        _check_url(webhook_url)
+        self.webhook_url = webhook_url
         self._payload: WebhookClientPayload | None = None
 
     def add_embed(self, embed: AbsDiscordEmbed) -> None:
@@ -46,6 +55,8 @@ class DiscordWebhookClient(AbsDiscordWebhookClient):
     def content(self, value: str) -> None:
         self._payload = WebhookClientPayload(content=value)
 
+
+class DiscordWebhookClient(AbsDiscordWebhookClient, DiscordBaseWebhookClient):
     def execute(self) -> None:
         if self._payload is None:
             raise ValueError('No payload to send')
@@ -60,8 +71,10 @@ class DiscordWebhookClient(AbsDiscordWebhookClient):
         self._payload = None
 
 
-class DiscordWebhookAsyncClient(DiscordWebhookClient):
-    async def execute(self) -> None:  # type: ignore
+class DiscordWebhookAsyncClient(
+    AbsDiscordWebhookAsyncClient, DiscordBaseWebhookClient
+):
+    async def execute(self) -> None:
         if self._payload is None:
             raise ValueError('No payload to send')
 
